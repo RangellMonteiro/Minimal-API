@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Adiciona o DbContexto com a string de conexão do appsettings
 builder.Services.AddDbContext<DbContexto>(options =>
 {
@@ -17,6 +20,8 @@ builder.Services.AddDbContext<DbContexto>(options =>
 });
 
 var app = builder.Build();
+
+
 
 app.MapGet("/", () => "Hello World!");
 
@@ -34,5 +39,8 @@ app.MapGet("/administradores", async (DbContexto db) =>
     var administradores = await db.Administradores.ToListAsync();
     return Results.Ok(administradores);
 });
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
