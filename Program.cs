@@ -61,12 +61,23 @@ app.MapPost("/veiculos", ([FromBody]VeiculoDTO veiculoDTO, IVeiculoServico veicu
     return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
 }).WithTags("Veículo");
 
-// Endpoint para obter todos os administradores
+// Endpoint para obter todos os Veículos
 app.MapGet("/Veiculos", ([FromQuery] int? pagina, IVeiculoServico veiculoServico) =>
 {
     var veiculos = veiculoServico.Todos(pagina);
     return Results.Ok(veiculos);
 }).WithTags("Veículo");
+
+app.MapGet("/Veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
+{
+    var veiculo = veiculoServico.BuscaPorId(id);
+
+    if(veiculo == null) return Results.NotFound();
+    return Results.Ok(veiculo);
+}).WithTags("Veículo");
+
+
+
 #endregion
 #region APP
 app.UseSwagger();
