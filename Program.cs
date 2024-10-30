@@ -6,6 +6,7 @@ using MinimalApi.DTOs;
 using MinimalApi.Infraestrutura.Db;
 using minimal_api2.Dominio.ModelViews;
 using MinimalApi.Dominio.Entidades;
+using minimal_api2.Dominio.Enuns;
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,13 +40,68 @@ app.MapPost("/administradores/login", ([FromBody]LoginDTO loginDTO, IAdministrad
         return Results.Unauthorized();
 });
 
+app.MapGet("/administradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
+{   var adms = new List<AdministradorModelView>();
+    var administradores = administradorServico.Todos(pagina);
+    foreach (var adm in administradores)
+    {
+        adms.Add(new AdministradorModelView{
+            Id = adm.Id,
+            Email = adm.Email,
+            Perfil = adm.Perfil
+        });
+    }
+    return Results.Ok(adms);
+}).WithTags("Administradores");
 
-// Endpoint para obter todos os administradores
-app.MapGet("/administradores", async (DbContexto db) =>
+app.MapGet("/Administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
 {
-    var administradores = await db.Administradores.ToListAsync();
-    return Results.Ok(administradores);
-}).WithTags("Administrador");
+    var administrador = administradorServico.BuscaPorId(id);
+
+    if(administrador == null) return Results.NotFound();
+    return Results.Ok(new AdministradorModelView{
+        Id = administrador.Id,
+        Email = administrador.Email,
+        Perfil = administrador.Perfil
+    });
+}).WithTags("Administradores");
+
+
+
+app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
+{
+    var validacao = new ErrosDeValidacao{
+        Mensagens = new List<string>()
+    };
+
+    if(string.IsNullOrEmpty(administradorDTO.Email))
+        validacao.Mensagens.Add("Email não pode ser vazio.");
+
+    if(string.IsNullOrEmpty(administradorDTO.Senha))
+        validacao.Mensagens.Add("Senha não pode ser vazia.");
+    if(administradorDTO.Perfil == null)
+        validacao.Mensagens.Add("Perfil não pode estar vazio.");
+
+
+    if(validacao.Mensagens.Count > 0)
+        return Results.BadRequest(validacao);
+
+    var administrador = new Administrador{
+        Email = administradorDTO.Email,
+        Senha = administradorDTO.Senha,
+        Perfil= administradorDTO.Perfil.ToString() ?? Perfil.Editor.ToString()
+
+    };
+    administradorServico.Incluir(administrador);
+    return Results.Created($"/administrador/{administrador.Id}", new AdministradorModelView{
+        Id = administrador.Id,
+        Email = administrador.Email,
+        Perfil= administrador.Perfil
+    });
+
+
+});
+
 #endregion
 
 #region Veiculos
