@@ -60,6 +60,13 @@ app.MapPost("/veiculos", ([FromBody]VeiculoDTO veiculoDTO, IVeiculoServico veicu
 
     return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
 });
+
+// Endpoint para obter todos os administradores
+app.MapGet("/Veiculos", ([FromQuery] int? pagina, IVeiculoServico veiculoServico) =>
+{
+    var veiculos = veiculoServico.Todos(pagina);
+    return Results.Ok(veiculos);
+});
 #endregion
 #region APP
 app.UseSwagger();
