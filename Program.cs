@@ -27,7 +27,7 @@ var app = builder.Build();
 
 #region  Home
 
-app.MapGet("/", () => Results.Json(new Home()));
+app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 #endregion
 
 #region Administradores
@@ -45,7 +45,7 @@ app.MapGet("/administradores", async (DbContexto db) =>
 {
     var administradores = await db.Administradores.ToListAsync();
     return Results.Ok(administradores);
-});
+}).WithTags("Administrador");
 #endregion
 
 #region Veiculos
@@ -59,14 +59,14 @@ app.MapPost("/veiculos", ([FromBody]VeiculoDTO veiculoDTO, IVeiculoServico veicu
     veiculoServico.Incluir(veiculo);
 
     return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
-});
+}).WithTags("Veículo");
 
 // Endpoint para obter todos os administradores
 app.MapGet("/Veiculos", ([FromQuery] int? pagina, IVeiculoServico veiculoServico) =>
 {
     var veiculos = veiculoServico.Todos(pagina);
     return Results.Ok(veiculos);
-});
+}).WithTags("Veículo");
 #endregion
 #region APP
 app.UseSwagger();
