@@ -140,3 +140,4 @@ C:\Users\Rangell\minimal-api2\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dl
 C:\Users\Rangell\minimal-api2\obj\Debug\net8.0\minimal-api2.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Rangell\minimal-api2\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Rangell\minimal-api2\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Rangell\minimal-api2\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
